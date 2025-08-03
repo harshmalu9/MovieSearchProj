@@ -4,9 +4,9 @@ const inputSection = document.getElementById("searchInput")
 const movieResults = document.getElementById("movieResults")
 const favorites = document.getElementById("favorites")
 
-// const favoriteMovies = [];
-const favoriteMovies = JSON.parse(localStorage.getItem('favorites')) || [];
+let favoriteMovies = JSON.parse(localStorage.getItem('favorites')) || [];
 
+document.addEventListener("DOMContentLoaded", displayFavorites());
 
 async function fetchMovie(query){
     const response = await fetch(`${url}&s=${query}`)
@@ -18,7 +18,6 @@ async function fetchMovie(query){
     }else{
         movieResults.innerHTML = "<p>No movies available for this keyword, try something else.</p>"
     }
-
 }
 
 searchButton.addEventListener("click", function(){
@@ -59,15 +58,18 @@ function displayFavorites(){
             <img src="${movie.poster}" alt="${movie.title}">
             <h3>${movie.title}</h3>
             <p>Year: ${movie.year}</p>
-            <button>Remove</button>
+            <button onclick = "removeFavorite('${movie.id}')">Remove</button>
         `;
 
-        movieCard.classList = "movie-card"
+        movieCard.classList = "the movie-card"
 
         favorites.appendChild(movieCard);
     });
 }
 
+function removeFavorite(movieId){
+    favoriteMovies = favoriteMovies.filter((movieToremove) => movieToremove.id != movieId);
+    localStorage.setItem('favorites', JSON.stringify(favoriteMovies))
+    displayFavorites();
+}
 
-
-// fetchMovie("someone")

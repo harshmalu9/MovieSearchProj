@@ -2,6 +2,11 @@ const url = "http://www.omdbapi.com/?i=tt3896198&apikey=ff819dff"
 const searchButton = document.getElementById("searchBtn");
 const inputSection = document.getElementById("searchInput") 
 const movieResults = document.getElementById("movieResults")
+const favorites = document.getElementById("favorites")
+
+// const favoriteMovies = [];
+const favoriteMovies = JSON.parse(localStorage.getItem('favorites')) || [];
+
 
 async function fetchMovie(query){
     const response = await fetch(`${url}&s=${query}`)
@@ -30,7 +35,7 @@ function displayMovies(movies){
             <img src="${movie.Poster}" alt="${movie.Title}">
             <h3>${movie.Title}</h3>
             <p>Year: ${movie.Year}</p>
-            <button>Add to Favorites</button>
+            <button onclick = "addToFavorites('${movie.imdbID}', '${movie.Title.replace("'", "\\" + "'")}', '${movie.Poster}', '${movie.Year}')"> Add to Favorites</button>
         `;
 
         movieCard.classList = "movie-card"
@@ -39,3 +44,30 @@ function displayMovies(movies){
     });
 }
 
+function addToFavorites(id, title, poster, year){
+    if(favoriteMovies.some((movie) => movie.id === id)) return;
+    favoriteMovies.push({id, title, poster, year});
+    localStorage.setItem('favorites', JSON.stringify(favoriteMovies))
+    displayFavorites();
+}
+
+function displayFavorites(){
+    favorites.innerHTML = ""
+    favoriteMovies.forEach(movie => {
+        const movieCard = document.createElement("div");
+        movieCard.innerHTML = `
+            <img src="${movie.poster}" alt="${movie.title}">
+            <h3>${movie.title}</h3>
+            <p>Year: ${movie.year}</p>
+            <button>Remove</button>
+        `;
+
+        movieCard.classList = "movie-card"
+
+        favorites.appendChild(movieCard);
+    });
+}
+
+
+
+// fetchMovie("someone")
